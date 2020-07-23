@@ -82,6 +82,7 @@ public class myEncryptTools extends JFrame{
             String Key = "1234567890";
             StringBuilder hexString = new StringBuilder();
             try {
+                // 生成密钥
                 MessageDigest md = MessageDigest.getInstance("MD5");
                 md.update(Key.getBytes());
                 byte[] hash = md.digest();
@@ -93,12 +94,10 @@ public class myEncryptTools extends JFrame{
                     }
                 }
                 System.out.println(hexString);
+
+                // 加密
                 String content = "abc";
-                KeyGenerator kgen = KeyGenerator.getInstance("AES");
-                kgen.init(256, new SecureRandom(hexString.toString().getBytes()));
-                SecretKey secretKey = kgen.generateKey();
-                byte[] enCodeFormat = secretKey.getEncoded();
-                SecretKeySpec key = new SecretKeySpec(enCodeFormat, "AES");
+                SecretKeySpec key = new SecretKeySpec(hexString.toString().getBytes(), "AES");
                 Cipher cipher = Cipher.getInstance("AES");
                 byte[] byteContent = content.getBytes(StandardCharsets.UTF_8);
                 cipher.init(Cipher.ENCRYPT_MODE, key);
@@ -106,8 +105,6 @@ public class myEncryptTools extends JFrame{
                 System.out.println(Arrays.toString(result));
 
                 //解密
-                kgen = KeyGenerator.getInstance("AES");
-                kgen.init(256, new SecureRandom(hexString.toString().getBytes()));
                 cipher = Cipher.getInstance("AES");// 创建密码器
                 cipher.init(Cipher.DECRYPT_MODE, key);// 初始化
                 result = cipher.doFinal(result);
