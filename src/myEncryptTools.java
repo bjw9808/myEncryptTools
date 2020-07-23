@@ -2,6 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.math.BigInteger;
+import java.security.MessageDigest;
 
 public class myEncryptTools extends JFrame{
 
@@ -13,7 +16,7 @@ public class myEncryptTools extends JFrame{
 
     public myEncryptTools() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
         setTitle("myEncryptTools");
-        setSize(420,200);
+        setSize(180,220);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         setLocationRelativeTo(null);
@@ -41,11 +44,20 @@ public class myEncryptTools extends JFrame{
     class selectFileAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JFileChooser jFileChoose = new JFileChooser("C:\\");
-            int fileChooseResult = jFileChoose.showOpenDialog(null);
-            if(fileChooseResult == JFileChooser.APPROVE_OPTION) {
-                String fileName = jFileChoose.getSelectedFile().toString();
-                filePathLabel.setText(fileName);
+            fileChooser thisFileChooser = new fileChooser();
+            Thread thread = new Thread(thisFileChooser);
+            thread.start();
+        }
+
+        class fileChooser implements Runnable {
+            @Override
+            public void run() {
+                JFileChooser jFileChoose = new JFileChooser("C:\\");
+                int fileChooseResult = jFileChoose.showOpenDialog(null);
+                if(fileChooseResult == JFileChooser.APPROVE_OPTION) {
+                    String fileName = jFileChoose.getSelectedFile().toString();
+                    filePathLabel.setText(fileName);
+                }
             }
         }
     }
