@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.io.FileInputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class myEncryptTools extends JFrame{
 
@@ -36,6 +37,7 @@ public class myEncryptTools extends JFrame{
         JButton decryptButton = new JButton("DecryptFile");
 
         selectFileButton.addActionListener(new selectFileAction());
+        encryptButton.addActionListener(new encryptFile());
 
         jp.add(selectFileButton);
         jp.add(encryptButton);
@@ -62,6 +64,29 @@ public class myEncryptTools extends JFrame{
                     String fileName = jFileChoose.getSelectedFile().toString();
                     filePathLabel.setText(fileName);
                 }
+            }
+        }
+    }
+
+    class encryptFile implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String Key = "123456";
+            StringBuilder hexString = new StringBuilder();
+            try {
+                MessageDigest md = MessageDigest.getInstance("MD5");
+                md.update(Key.getBytes());
+                byte[] hash = md.digest();
+                for (int i = 0; i < hash.length; i++) {
+                    if ((0xff & hash[i]) < 0x10) {
+                        hexString.append("0").append(Integer.toHexString((0xFF & hash[i])));
+                    } else {
+                        hexString.append(Integer.toHexString(0xFF & hash[i]));
+                    }
+                }
+                System.out.println(hexString.toString());
+            } catch (NoSuchAlgorithmException noSuchAlgorithmException) {
+                noSuchAlgorithmException.printStackTrace();
             }
         }
     }
