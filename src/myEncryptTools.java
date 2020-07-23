@@ -16,20 +16,24 @@ public class myEncryptTools extends JFrame{
 
     public myEncryptTools() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
         setTitle("myEncryptTools");
-        setSize(180,220);
+        setSize(400,400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         setLocationRelativeTo(null);
+        setResizable(false);
 
         JPanel jp=new JPanel();
-        jp.setLayout(new FlowLayout(FlowLayout.LEADING,20,20));
+        jp.setLayout(new FlowLayout(FlowLayout.LEADING, 20, 5));
 
-        this.filePathLabel=new JLabel("File Path:                                                                       ");
+        this.filePathLabel=new JLabel("File Path:");
         jp.add(filePathLabel);
 
-        JButton selectFileButton = new JButton("select your File");
-        JButton encryptButton = new JButton("Encrypt File");
-        JButton decryptButton = new JButton("Decrypt File");
+        JLabel title1 = new JLabel("Input Password:");
+        jp.add(title1);
+
+        JButton selectFileButton = new JButton("SelectFile");
+        JButton encryptButton = new JButton("EncryptFile");
+        JButton decryptButton = new JButton("DecryptFile");
 
         selectFileButton.addActionListener(new selectFileAction());
 
