@@ -1,11 +1,18 @@
+import javax.crypto.*;
+import javax.crypto.spec.SecretKeySpec;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileInputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Arrays;
 
 public class myEncryptTools extends JFrame{
 
@@ -71,22 +78,43 @@ public class myEncryptTools extends JFrame{
     class encryptFile implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            String Key = "123456";
+            // 暂时写死此Key
+            String Key = "1234567890";
             StringBuilder hexString = new StringBuilder();
             try {
                 MessageDigest md = MessageDigest.getInstance("MD5");
                 md.update(Key.getBytes());
                 byte[] hash = md.digest();
-                for (int i = 0; i < hash.length; i++) {
-                    if ((0xff & hash[i]) < 0x10) {
-                        hexString.append("0").append(Integer.toHexString((0xFF & hash[i])));
+                for (byte b : hash) {
+                    if ((0xff & b) < 0x10) {
+                        hexString.append("0").append(Integer.toHexString((0xFF & b)));
                     } else {
-                        hexString.append(Integer.toHexString(0xFF & hash[i]));
+                        hexString.append(Integer.toHexString(0xFF & b));
                     }
                 }
-                System.out.println(hexString.toString());
-            } catch (NoSuchAlgorithmException noSuchAlgorithmException) {
-                noSuchAlgorithmException.printStackTrace();
+                System.out.println(hexString);
+                String content = "abc";
+                KeyGenerator kgen = KeyGenerator.getInstance("AES");
+                kgen.init(256, new SecureRandom(hexString.toString().getBytes()));
+                SecretKey secretKey = kgen.generateKey();
+                byte[] enCodeFormat = secretKey.getEncoded();
+                SecretKeySpec key = new SecretKeySpec(enCodeFormat, "AES");
+                Cipher cipher = Cipher.getInstance("AES");
+                byte[] byteContent = content.getBytes(StandardCharsets.UTF_8);
+                cipher.init(Cipher.ENCRYPT_MODE, key);
+                byte[] result = cipher.doFinal(byteContent);
+                System.out.println(Arrays.toString(result));
+
+                //解密
+                kgen = KeyGenerator.getInstance("AES");
+                kgen.init(256, new SecureRandom(hexString.toString().getBytes()));
+                cipher = Cipher.getInstance("AES");// 创建密码器
+                cipher.init(Cipher.DECRYPT_MODE, key);// 初始化
+                result = cipher.doFinal(result);
+                System.out.println(Arrays.toString(result));
+
+            } catch (Exception exception) {
+                exception.printStackTrace();
             }
         }
     }
